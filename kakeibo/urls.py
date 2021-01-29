@@ -13,5 +13,6 @@ urlpatterns = [
     path('delete/<int:pk>/', views.KakeiboDeleteView.as_view(), name='kakeibo_delete'),
     path('delete_done/', views.delete_done, name='delete_done'),
     path('circle/',views.show_circle_graph, name='kakeibo_circle'),
+    path('line/', views.show_line_graph,name='kakeibo_line'),
 
     ]
