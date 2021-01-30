@@ -102,6 +102,7 @@ class show_line_grahp(request):
         for j in range(len(category_total)):
             money = category_total[j]["total_price"]
             category = Category.objects.get(pk=category_total[j]["category"])
+            # 各年月、カテゴリ名、カテゴリ毎の合計金額を格納
             monthly_sum_data.append([x_label[i], category.category_name,money])
     # RGBA 最大10個までカテゴリ追加可能
     # 折れ線グラフの凡例の色
@@ -114,5 +115,26 @@ class show_line_grahp(request):
     background_color = []
     for x,y in zip(category_list,background_color_list):
         background_color.append([x,y])
+    """
+    月によっては一つのカテゴリの合計金額が0円になると、折れ線グラフが途切れてしまう
+    なので、0パディングする、
+    """
+    matrix_list = []
+    for item_label in x_label:
+        for item_category in category_list:
+            matrix_list.append([item_label,item_category,0])
+
+    for yyyy_mm,category,total in monthly_sum_data:
+        for i,data in enumerate(matrix_list):
+            if data[0] == yyyy_mm and data[1] == category:
+                matrix_list[i][2] = total
+
+    return render(request, 'kakeibo/kakeibo_line.html',{
+        'x_label':x_label,
+        'category_list':category_list,
+        'border_color':border_color,
+        'background_color':background_color,
+        'matrix_list':matrix_list,
+    })
 
 
