@@ -77,6 +77,82 @@
       ] }
     });
 </script>
+<!-- 折れ線グラフの設定-->
+<script>
+  var ctx = document.getElementById("LineChart").getContext('2d');
+  var DiskChart = new Chart(ctx, {
+  type: 'line',
+    data: {
+      labels:[
+          {% for item in x_label %}
+            "{{ item }}",
+          {% endfor %}],
+      datasets: [
+          {% for category_name in category_list %}
+              {
+                label: "{{ category_name }}",
+                fill: false,
+              {% for category ,color in border_color %}
+                  {% if category == category_name %}
+                    borderColor: 'rgba({{ color }})',
+                  {% endif %}
+              {% endfor %}
+              {% for category ,color in background_color %}
+                  {% if category == category_name %}
+                    backgroundColor: 'rgba({{ color }})',
+                  {% endif %}
+              {% endfor %}
 
+                data: [
+                    {% for time_label in x_label %}
+
+                      {% for date, category, total in matrix_list %}
+                         {% if category == category_name %}
+                            {% if date == time_label %}
+                              {{total}},
+                            {% endif %}
+                         {% endif %}
+                      {% endfor %}
+                        {% endfor %}
+                ],
+              },
+          {% endfor %}
+      //以下を追加
+
+    ]
+  },
+  options: {
+       responsive: true,
+       scales: {
+         xAxes: [{
+           scaleLabel: {
+             display: true,
+             labelString: '時間'
+           },
+           ticks: {                      // 目盛り
+               maxRotation:0, //X軸の表示角度調整
+               minRotation:0  //X軸の表示角度調整
+             },
+           }],
+           yAxes: [{
+             scaleLabel: {
+               display: true,
+               labelString: '合計金額（円）'
+             },
+           ticks:{
+             min: 0,   // 最小値
+             }
+            }],
+          },
+         title: {
+           display: true,         // 表示設定
+           pocision: "top",       // 表示位置
+           fontSize: 30,          // フォントサイズ
+           fontColor: "black",    // 文字の色
+           text: "月毎の合計金額推移" // タイトル文字列
+         },
+    }
+});
+</script>
 </body>
 </html>
